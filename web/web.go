@@ -6,6 +6,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"io/ioutil"
+	"encoding/json"
 )
 
 /*
@@ -48,7 +50,7 @@ type HttpError struct {
  */
 func (self HttpError) Error() string {
 	return strconv.Itoa(self.statusCode) + ":\n" +
-		self.status
+			self.status
 }
 
 /*
@@ -138,7 +140,7 @@ func (self *Web) getQuery() string {
 	sep := ""
 	for _, key := range params {
 		value := self.params.Get(key)
-		ret += sep + key + "=" + value
+		ret += sep+key+"="+value
 		sep = "&"
 	}
 	return ret
@@ -150,7 +152,7 @@ func (self *Web) getQuery() string {
 func (self *Web) Get(url string) (*http.Response, error) {
 	q := self.getQuery()
 	if q != "" {
-		q = "?" + q
+		q = "?"+q
 	}
 	return self.execute("GET", url+q, "")
 }
@@ -200,4 +202,33 @@ func (self *Web) execute(method string, url string, body string) (*http.Response
 		}
 	}
 	return resp, nil
+}
+
+func ReadJson(r *http.Response, v interface{}) error {
+	data, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	//取得する
+	err = json.Unmarshal(data, v)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func WriteJson(w http.ResponseWriter, v interface{}) error {
+
+	bits, err := json.Marshal(v);
+	if err != nil {
+		return err
+	}
+
+	_,err  = w.Write(bits)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
