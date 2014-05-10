@@ -237,6 +237,11 @@ func (self *OAuth1) Post(url string, args map[string]string) (*http.Response, er
 	return wb.Post(url)
 }
 
+func (self *OAuth1) Put(url string, data []byte) (*http.Response, error) {
+	wb := self.createOAuthWeb("PUT", url, nil)
+	return wb.Put(url, data)
+}
+
 /*
  * OAuthでのアクセス用のWebを取得する
  */

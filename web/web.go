@@ -1,13 +1,13 @@
 package web
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"sort"
 	"strconv"
 	"strings"
-	"io/ioutil"
-	"encoding/json"
 )
 
 /*
@@ -50,7 +50,7 @@ type HttpError struct {
  */
 func (self HttpError) Error() string {
 	return strconv.Itoa(self.statusCode) + ":\n" +
-			self.status
+		self.status
 }
 
 /*
@@ -140,7 +140,7 @@ func (self *Web) getQuery() string {
 	sep := ""
 	for _, key := range params {
 		value := self.params.Get(key)
-		ret += sep+key+"="+value
+		ret += sep + key + "=" + value
 		sep = "&"
 	}
 	return ret
@@ -152,7 +152,7 @@ func (self *Web) getQuery() string {
 func (self *Web) Get(url string) (*http.Response, error) {
 	q := self.getQuery()
 	if q != "" {
-		q = "?"+q
+		q = "?" + q
 	}
 	return self.execute("GET", url+q, "")
 }
@@ -165,12 +165,15 @@ func (self *Web) Post(url string) (*http.Response, error) {
 	return self.execute("POST", url, self.getQuery())
 }
 
+func (self *Web) Put(url string, data []byte) (*http.Response, error) {
+	return self.execute("PUT", url, string(data))
+}
+
 /*
  * methodに応じた処理を行う
  * 現状サポートはGET、POSTのみ
  */
 func (self *Web) execute(method string, url string, body string) (*http.Response, error) {
-
 	//リクエストの生成
 	req, reqErr := http.NewRequest(method, url, strings.NewReader(body))
 	if reqErr != nil {
@@ -220,12 +223,12 @@ func ReadJson(r *http.Response, v interface{}) error {
 
 func WriteJson(w http.ResponseWriter, v interface{}) error {
 
-	bits, err := json.Marshal(v);
+	bits, err := json.Marshal(v)
 	if err != nil {
 		return err
 	}
 
-	_,err  = w.Write(bits)
+	_, err = w.Write(bits)
 	if err != nil {
 		return err
 	}
