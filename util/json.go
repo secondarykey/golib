@@ -1,3 +1,4 @@
+//Json Utility
 package util
 
 import (
@@ -5,22 +6,20 @@ import (
 	"io/ioutil"
 )
 
-/*
- */
-func ReadJsonFile(token interface{}, filename string) error {
-	if b, err := ioutil.ReadFile(filename); err != nil {
+//json file{f} changed into a structure{v}
+func ReadJsonFile(v interface{}, f string) error {
+	if b, err := ioutil.ReadFile(f); err != nil {
 		return err
 	} else {
-		return json.Unmarshal(b, token)
+		return json.Unmarshal(b, v)
 	}
 }
 
-/*
- */
-func WriteJsonFile(token interface{}, filename string) error {
-	if b, err := json.Marshal(token); err != nil {
+//structure{v} changed into a json file{f}
+func WriteJsonFile(v interface{}, f string) error {
+	if b, err := json.Marshal(v); err != nil {
 		return err
 	} else {
-		return ioutil.WriteFile(filename, b, 0666)
+		return ioutil.WriteFile(f, b, 0666)
 	}
 }

@@ -11,9 +11,11 @@ type TestStruct struct {
 }
 
 func TestReadJsonFile(t *testing.T) {
-	err := ReadJsonFile(data, "")
+	var data TestStruct
+	err := ReadJsonFile(&data, "")
 }
 
 func TestWriteJsonFile(t *testing.T) {
-	err := WriteJsonFile(data, "")
+	var data TestStruct
+	err := WriteJsonFile(&data, "")
 }

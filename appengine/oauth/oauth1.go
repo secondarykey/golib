@@ -2,10 +2,11 @@
 package oauth
 
 import (
+	"appengine"
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/base64"
-	"github.com/secondarykey/golib/web"
+	"github.com/secondarykey/golib/appengine/web"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -29,6 +30,8 @@ type OAuth1 struct {
 	AuthroizeUrl string
 
 	AccessToken *TokenSet
+
+	context *appengine.Context
 
 	authParams *web.Parameter
 }
@@ -66,6 +69,10 @@ func NewOAuth1(key, secret, requestTokenUrl, authroizeTokenUrl, accessTokenUrl s
 		AuthroizeTokenUrl: authroizeTokenUrl,
 		AccessTokenUrl:    accessTokenUrl,
 	}
+}
+
+func (oauth *OAuth1) SetContext(c *appengine.Context) {
+	oauth.context = c
 }
 
 /*
@@ -257,6 +264,8 @@ func (self *OAuth1) createOAuthWeb(method string, url string, args map[string]st
 			param.Add(key, value)
 		}
 	}
+
+	wb.SetContext(self.context)
 
 	//キーを作成
 	key := escape(self.ConsumerSecret) + "&" + escape(self.AccessToken.Secret)
