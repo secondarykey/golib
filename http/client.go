@@ -112,7 +112,7 @@ func (w *Client) execute(method string, url string, body string) (*http.Response
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Do error:%s", err)
 	}
 
 	if resp.StatusCode < http.StatusOK ||
